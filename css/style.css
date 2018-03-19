@@ -210,6 +210,8 @@ select {
 
 .results .card:hover {
   border: solid 1px #2222224f;
+  box-shadow: rgba(0, 0, 0, 0.8) 0 0 20px;
+
 }
 
 .line h4 {
