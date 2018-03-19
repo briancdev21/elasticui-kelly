@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>ElasticUI Demo</title>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <script src="http://code.angularjs.org/1.2.16/angular.js"></script>
+    <script src="http://rawgit.com/YousefED/ElasticUI/master/examples/demo/lib/elasticsearch.angular.js"></script>
+    <script src="http://rawgit.com/YousefED/ElasticUI/master/examples/demo/lib/elastic.js"></script>
+    <script src="http://rawgit.com/YousefED/ElasticUI/master/dist/elasticui.min.js"></script>
+    <link rel="stylesheet" href="./css/style.css" >
+    <script>
+        angular
+            .module('tutorial', ['elasticui'])
+            .constant('euiHost', 'http://ec2-13-211-42-88.ap-southeast-2.compute.amazonaws.com:9200/'); // ACTION: change to cluster address
+    </script>
+</head>
+<body ng-app="tutorial" eui-index="'web'"><!-- ACTION: change to index name -->
+    <div class="container-fluid" >
+        <div class="row">
+            <div class="main-content">
+                <div class="searchbar">
+                    <div class="arrow-btn left-arrow-btn" onclick="mainClick()" ></div>
+                    <eui-searchbox field="'alt_names'" placeholder="Search..." ></eui-searchbox> <!-- ACTION: change to field to search on -->
+                </div>
+                <div class="sidebar">
+                    <div class="content" >
+                        <h3>Country Code</h3>
+                        <eui-singleselect field="'country_code.keyword'" size="5"></eui-singleselect> <!-- ACTION: change to field to use as facet -->
+                        <h3>Population</h3>
+                        <eui-checklist field="'population.keyword'" size="10"></eui-checklist> <!-- ACTION: change to field to use as facet -->
+                        <h3>Results Per Page</h3>
+                        <select ng-model="indexVM.pageSize">
+                            <option ng-repeat="item in [10, 20, 50, 100]">{{item}}</option>
+                        </select>
+                    </div>                  
+                </div>
+                <div class="main" >
+                    <div  style="overflow: auto;">
+                        <div class="results" >
+                            <div class="card" ng-repeat="doc in indexVM.results.hits.hits" >
+                                <div class="line" ng-repeat="(key, data) in doc._source" >
+                                    <h4 class="title" >{{key}}</h4>
+                                    <span class="desc" >{{data.split(',').join(', ')}}</span>
+                                </div>
+                            </div>
+                            <!-- <thead>
+                                <tr>
+                                    <th align="center" ng-repeat="(key, data) in indexVM.results.hits.hits[0]._source">
+                                        {{key}}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="doc in indexVM.results.hits.hits">
+                                    <td ng-repeat="(key, data) in doc._source">
+                                        <div>
+                                                {{data}}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody> -->
+                        </div>
+                    </div>    
+                    <eui-simple-paging></eui-simple-paging>                      
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var clicked = false;
+    var lastScrollTop = 0;
+
+    function mainClick() {
+        clicked = !clicked;
+        if (clicked) {
+            document.querySelector('.arrow-btn').classList = 'arrow-btn right-arrow-btn';
+            document.querySelector('.sidebar').classList = 'sidebar active';
+        } else {
+            document.querySelector('.arrow-btn').classList = 'arrow-btn left-arrow-btn';
+            document.querySelector('.sidebar').classList = 'sidebar';
+        }
+    }
+    document.onscroll = function () {
+        var st = window.pageYOffset || document.documentElement.scrollTop; // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
+        if (st > lastScrollTop){
+            // downscroll code
+            console.log('down');
+            var hiddensearchbar = document.querySelector('.searchbar.hidesearchbar');
+            if (!hiddensearchbar) document.querySelector('.searchbar').classList = 'searchbar hidesearchbar';
+
+        } else {
+            // upscroll code
+            console.log('up');
+            document.querySelector('.searchbar').classList = 'searchbar';
+        }
+        lastScrollTop = st;
+    }
+</script>
+</html>
