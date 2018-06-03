@@ -5,42 +5,53 @@
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
     <script src="http://code.angularjs.org/1.2.16/angular.js"></script>
     <script src="http://rawgit.com/YousefED/ElasticUI/master/examples/demo/lib/elasticsearch.angular.js"></script>
-    <script src="http://rawgit.com/YousefED/ElasticUI/master/examples/demo/lib/elastic.js"></script>
-    <script src="http://rawgit.com/YousefED/ElasticUI/master/dist/elasticui.min.js"></script>
+    <script src="cus_elastic.js"></script>
+    <script src="cus_elasticui.js"></script>
     <link rel="stylesheet" href="./css/style.css" >
     <script>
         angular
             .module('tutorial', ['elasticui'])
-            .constant('euiHost', 'http://ec2-13-211-42-88.ap-southeast-2.compute.amazonaws.com:9200/'); // ACTION: change to cluster address
+            .constant('euiHost', 'https://19d7d779f8a502497d7eed2a5d035771.ap-southeast-2.aws.found.io:9243/'); // ACTION: change to cluster address
+        
     </script>
 </head>
-<body ng-app="tutorial" eui-index="'web'"><!-- ACTION: change to index name -->
+<body ng-app="tutorial" eui-index="'saveddoc,savedsearch'"><!-- ACTION: change to index name -->
     <div class="container-fluid" >
         <div class="row">
             <div class="main-content">
                 <div class="searchbar">
                     <div class="arrow-btn left-arrow-btn" onclick="mainClick()" ></div>
-                    <eui-searchbox field="'alt_names'" placeholder="Search..." ></eui-searchbox> <!-- ACTION: change to field to search on -->
+                    <div class="searchbox" >
+                        <eui-searchbox field="'title'" placeholder="Search..." onclick="focusBlurSearchbox(event)" ></eui-searchbox>
+                        <label>Search</label>
+                    </div>
                 </div>
                 <div class="sidebar">
                     <div class="content" >
-                        <h3>Country Code</h3>
-                        <eui-singleselect field="'country_code.keyword'" size="5"></eui-singleselect> <!-- ACTION: change to field to use as facet -->
-                        <h3>Population</h3>
-                        <eui-checklist field="'population.keyword'" size="10"></eui-checklist> <!-- ACTION: change to field to use as facet -->
+                        <h3>Title</h3>
+                        <eui-singleselect field="'title.keyword'" size="5"></eui-singleselect> <!-- ACTION: change to field to use as facet -->
+                        <h3>Categories</h3>
+                        <eui-checklist field="'categories.keyword'" size="10"></eui-checklist> <!-- ACTION: change to field to use as facet -->
                         <h3>Results Per Page</h3>
                         <select ng-model="indexVM.pageSize">
                             <option ng-repeat="item in [10, 20, 50, 100]">{{item}}</option>
                         </select>
+                        <div class="flex">
+                            <h3>Full Width Panel</h3>
+                            <div class="ui-switch" >
+                                <input type="checkbox" id="id-name--1" name="set-name" class="switch-input" onchange="switchFullWidth()">
+	                            <label for="id-name--1" class="switch-label"> <span class="toggle--on"></span><span class="toggle--off"></span></label>
+                            </div>
+                        </div>
                     </div>                  
                 </div>
-                <div class="main" >
+                <div class="main" onclick="mainClick()" >
                     <div  style="overflow: auto;">
                         <div class="results" >
                             <div class="card" ng-repeat="doc in indexVM.results.hits.hits" >
                                 <div class="line" ng-repeat="(key, data) in doc._source" >
                                     <h4 class="title" >{{key}}</h4>
-                                    <span class="desc" >{{data.split(',').join(', ')}}</span>
+                                    <span class="desc" >{{data.split('index.html').join(' index.html')}}</span>
                                 </div>
                             </div>
                             <!-- <thead>
@@ -70,15 +81,20 @@
 <script>
     var clicked = false;
     var lastScrollTop = 0;
+    var switchClicked = false;
+    var focused = false;
 
     function mainClick() {
         clicked = !clicked;
         if (clicked) {
-            document.querySelector('.arrow-btn').classList = 'arrow-btn right-arrow-btn';
-            document.querySelector('.sidebar').classList = 'sidebar active';
+            document.querySelector('.arrow-btn').className = 'arrow-btn right-arrow-btn';
+            document.querySelector('.sidebar').className += ' active';
+            document.querySelector('.main').className += ' active';
+
         } else {
-            document.querySelector('.arrow-btn').classList = 'arrow-btn left-arrow-btn';
-            document.querySelector('.sidebar').classList = 'sidebar';
+            document.querySelector('.arrow-btn').className = 'arrow-btn left-arrow-btn';
+            document.querySelector('.sidebar').className = document.querySelector('.sidebar').className.replace(' active', '');
+            document.querySelector('.main').className = document.querySelector('.main').className.replace(' active', '');
         }
     }
     document.onscroll = function () {
@@ -87,14 +103,39 @@
             // downscroll code
             console.log('down');
             var hiddensearchbar = document.querySelector('.searchbar.hidesearchbar');
-            if (!hiddensearchbar) document.querySelector('.searchbar').classList = 'searchbar hidesearchbar';
+            if (!hiddensearchbar) document.querySelector('.searchbar').className = 'searchbar hidesearchbar';
 
         } else {
             // upscroll code
             console.log('up');
-            document.querySelector('.searchbar').classList = 'searchbar';
+            document.querySelector('.searchbar').className = 'searchbar';
         }
         lastScrollTop = st;
     }
+    function switchFullWidth() {
+        switchClicked = !switchClicked;
+        if (switchClicked) {
+            document.querySelector('.main').className += ' full-width';
+        } else {
+            document.querySelector('.main').className = document.querySelector('.main').className.replace(' full-width', '');
+        }
+    }
+    function focusBlurSearchbox(event) {
+        event.stopPropagation();
+        console.log('focus');
+        if (!focused) {
+            focused = !focused;
+            document.querySelector('.searchbox label').className += ' focused';
+        }
+    }
+
+    document.onclick = function() {
+        var input = document.querySelector('input[type="text"]');
+        if (input.value == '' && document.querySelector('.searchbox label').className.indexOf('focused') !== -1) {
+            focused = !focused;
+            document.querySelector('.searchbox label').className = document.querySelector('.searchbox label').className.replace(' focused', '');
+        }
+    }
+
 </script>
 </html>
