@@ -38,9 +38,9 @@
   display: block;
   width: calc(100% + 60px);
   padding: 10px 20px;
-  margin: 0px 0px 10px -30px;
+  margin: 10px 0px 10px -30px;
 }
-eui-searchbox {
+.searchbox {
   border-bottom: 1px solid lightgray;
   position: relative;
   top: 0;
@@ -59,7 +59,7 @@ eui-searchbox input {
   /* position: absolute; */
   top: 0;
   border-bottom: 1.5px solid transparent;
-  padding: 1em 0.6em 0.2em;
+  padding: 1em 2px 0.2em 2px;
   outline: none;
   background: none;
   left: 0;
@@ -132,6 +132,8 @@ select {
   padding-right: 100px;
   padding-left: 100px;
   top: 80px;
+  min-width: 400px;
+  background: #efefef;
 }
 
 .searchbar {
@@ -188,20 +190,24 @@ select {
 
 
 .results {
+  margin: auto;
   margin-top: 30px;
-  /* width: 100%; */
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  justify-content: space-around;
+  justify-content: flex-start;
   flex-flow: row wrap;
 }
 
 
 .results .card {
-  box-shadow: rgba(0, 0, 0, 0.15) 0 0 20px;
+  background: #3D4051;
+  color: white;
+  font-size: 16px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.12);
+  border-radius: 4px;
   display: block;
-  width: 350px;
+  width: 450px;
   padding: 20px;
   margin: 20px;
   text-align: left;
@@ -214,15 +220,185 @@ select {
 
 }
 
-.line h4 {
+.line .title {
   margin-bottom: 3px;
+  font-size: 18px;
+  line-height: 24px;
   text-transform: capitalize;
 }
 
+.line .desc {
+  font-size: 15px;
+}
+
 .line {
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 
 .hidesearchbar {
   top: -80px;
+}
+
+@media (max-width: 1200px) {
+  .main.active .results {
+    width: 100%;
+    max-width: 800px;
+  }
+  .results .card {
+    width: 100%;
+  }
+
+}
+
+@media (min-width: 1200px) {
+  .main.active .results {
+    width: 1000px;
+  }
+}
+
+@media (min-width: 1700px) {
+  .main.active .results {
+    width: 1500px;
+  }
+}
+
+@media (min-width: 2200px) {
+  .main.active .results {
+    width: 2000px;
+  }
+}
+
+@media (max-width: 1550px) {
+  .main .results {
+    width: 100%;
+    max-width: 800px;
+  }
+  .results .card {
+    width: 100%;
+  }
+
+}
+@media (min-width: 1550px) {
+  .main .results {
+    width: 1000px;
+  }
+}
+@media (min-width: 2050px) {
+  .main .results {
+    width: 1500px;
+  }
+}
+@media (min-width: 2550px) {
+  .main .results {
+    width: 2000px;
+  }
+}
+@media (min-width: 2050px) {
+  .main .results {
+    width: 1600px;
+  }
+}
+
+.flex {
+  position: relative;
+}
+
+.ui-switch {
+  position: absolute;
+  top: 12px;
+  right: 0;
+}
+
+.switch-input {
+  display: none;
+}
+.switch-label {
+  position: relative;
+  display: inline-block;
+  min-width: 112px;
+  cursor: pointer;
+  font-weight: 500;
+  text-align: left;
+  margin: 16px;
+  /* padding: 16px 0 16px 44px; */
+  margin: 0;
+  min-width: 40px;
+  background: transparent;
+}
+.switch-label:before, .switch-label:after {
+  content: "";
+  position: absolute;
+  margin: 0;
+  outline: 0;
+  top: 50%;
+  -ms-transform: translate(0, -50%);
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.switch-label:before {
+  left: 1px;
+  width: 34px;
+  height: 14px;
+  background-color: #9E9E9E;
+  border-radius: 8px;
+}
+.switch-label:after {
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: #FAFAFA;
+  border-radius: 50%;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084);
+}
+.switch-label .toggle--on {
+  display: none;
+}
+.switch-label .toggle--off {
+  display: inline-block;
+}
+.switch-input:checked + .switch-label:before {
+  background-color: #4799e0b0;
+}
+.switch-input:checked + .switch-label:after {
+  background-color: #4799e0;
+  -ms-transform: translate(80%, -50%);
+  -webkit-transform: translate(80%, -50%);
+  transform: translate(80%, -50%);
+}
+.switch-input:checked + .switch-label .toggle--on {
+  display: inline-block;
+}
+.switch-input:checked + .switch-label .toggle--off {
+  display: none;
+}
+
+.main.full-width .card {
+  flex: 1 1 100%;
+}
+.main.full-width .results {
+  width: 100%;
+}
+
+.searchbox label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  z-index: 0;
+  padding: 0.4em 2px;
+  line-height: 100%;
+  font-weight: 300;
+  color: lightgray;
+  transition: all .2s linear;
+}
+.searchbox label.focused {
+  font-size: 12px;
+  color: #02bcd4;
+  padding-bottom: 3em;
+  /* align-items: flex-start; */
+  font-weight: bold;
 }
